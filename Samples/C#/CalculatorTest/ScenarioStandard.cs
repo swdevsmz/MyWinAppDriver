@@ -30,11 +30,11 @@ namespace CalculatorTest
         [TestMethod]
         public void Addition()
         {
-            // Find the buttons by their names and click them in sequence to perform 1 + 7 = 8
-            session.FindElementByName("One").Click();
-            session.FindElementByName("Plus").Click();
-            session.FindElementByName("Seven").Click();
-            session.FindElementByName("Equals").Click();
+            // Find the buttons by their names and click them in sequence to peform 1 + 7 = 8
+            session.FindElementByAccessibilityId("num1Button").Click();
+            session.FindElementByAccessibilityId("plusButton").Click();
+            session.FindElementByAccessibilityId("num7Button").Click();
+            session.FindElementByAccessibilityId("equalButton").Click();
             Assert.AreEqual("8", GetCalculatorResultText());
         }
 
@@ -55,10 +55,10 @@ namespace CalculatorTest
         public void Multiplication()
         {
             // Find the buttons by their names using XPath and click them in sequence to perform 9 x 9 = 81
-            session.FindElementByXPath("//Button[@Name='Nine']").Click();
-            session.FindElementByXPath("//Button[@Name='Multiply by']").Click();
-            session.FindElementByXPath("//Button[@Name='Nine']").Click();
-            session.FindElementByXPath("//Button[@Name='Equals']").Click();
+            session.FindElementByXPath("//Button[@Name='9']").Click();
+            session.FindElementByXPath("//Button[@Name='乗算']").Click();
+            session.FindElementByXPath("//Button[@Name='9']").Click();
+            session.FindElementByXPath("//Button[@Name='等号']").Click();
             Assert.AreEqual("81", GetCalculatorResultText());
         }
 
@@ -104,14 +104,14 @@ namespace CalculatorTest
             }            
 
             // Ensure that calculator is in standard mode
-            if (!header.Text.Equals("Standard", StringComparison.OrdinalIgnoreCase))
+            if (!header.Text.Equals("標準", StringComparison.OrdinalIgnoreCase))
             {
                 session.FindElementByAccessibilityId("TogglePaneButton").Click();
                 Thread.Sleep(TimeSpan.FromSeconds(1));
                 var splitViewPane = session.FindElementByClassName("SplitViewPane");
-                splitViewPane.FindElementByName("Standard Calculator").Click();
+                splitViewPane.FindElementByName("標準 電卓").Click();
                 Thread.Sleep(TimeSpan.FromSeconds(1));
-                Assert.IsTrue(header.Text.Equals("Standard", StringComparison.OrdinalIgnoreCase));
+                Assert.IsTrue(header.Text.Equals("標準", StringComparison.OrdinalIgnoreCase));
             }
 
             // Locate the calculatorResult element
@@ -128,13 +128,15 @@ namespace CalculatorTest
         [TestInitialize]
         public void Clear()
         {
-            session.FindElementByName("Clear").Click();
+            //session.FindElementByName("Clear").Click();
+            session.FindElementByName("クリア").Click();
             Assert.AreEqual("0", GetCalculatorResultText());
         }
 
         private string GetCalculatorResultText()
         {
-            return calculatorResult.Text.Replace("Display is", string.Empty).Trim();
+            //return calculatorResult.Text.Replace("Display is", string.Empty).Trim();
+            return calculatorResult.Text.Replace("表示は ", string.Empty).Replace(" です", string.Empty).Trim();
         }
     }
 }
