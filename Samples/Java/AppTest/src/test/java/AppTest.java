@@ -14,11 +14,27 @@
 //
 //******************************************************************************
 
+import org.apache.commons.io.FileUtils;
+import org.apache.regexp.recompile;
 import org.junit.*;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
+
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
+
+import javax.imageio.ImageIO;
+
+import java.awt.AWTException;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+
 import io.appium.java_client.windows.WindowsDriver;
 import io.appium.java_client.windows.WindowsElement;
 
@@ -26,6 +42,11 @@ public class AppTest {
 
     private static WindowsDriver session = null;
     private static WebElement result = null;
+
+    private static SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd_HHmmsss");
+
+    Robot robot;
+    Rectangle bounds;
 
     @BeforeClass
     public static void setup() {
@@ -40,18 +61,21 @@ public class AppTest {
 //            Assert.assertNotNull(CalculatorResult);
             result = session.findElementByAccessibilityId("textBox1");
 
+
+
         }catch(Exception e){
             e.printStackTrace();
         } finally {
         }
     }
 
-//    @Before
-//    public void Clear()
-//    {
+    @Before
+    public void Clear()
+    {
 //        CalculatorSession.findElementByAccessibilityId("clearButton").click();
 //        Assert.assertEquals("0", _GetCalculatorResultText());
-//    }
+        initScreenCapture();
+    }
 //
 //    @AfterClass
 //    public static void TearDown()
@@ -65,10 +89,30 @@ public class AppTest {
 
     @Test
     public void Input() {
-        session.findElementByAccessibilityId("textBox1").sendKeys("ABCD");
-        session.findElementByAccessibilityId("button1").click();
-        session.findElementByAccessibilityId("textBox1").clear();
-        session.findElementByAccessibilityId("textBox1").sendKeys("よしかつ");
+
+        try {
+            session.findElementByAccessibilityId("textBox1").sendKeys("ABCD");
+
+            File file =session.getScreenshotAs(OutputType.FILE);
+            FileUtils.copyFile(file, new File("C:\\temp\\cap0.png"));
+
+            //this.createScreenCapture();
+            session.findElementByAccessibilityId("button1").click();
+            file =session.getScreenshotAs(OutputType.FILE);
+            FileUtils.copyFile(file, new File("C:\\temp\\cap1.png"));
+
+            //this.createScreenCapture();
+            session.findElementByAccessibilityId("textBox1").clear();
+            //this.createScreenCapture();
+            session.findElementByAccessibilityId("textBox1").sendKeys("よしかつ");
+            file =session.getScreenshotAs(OutputType.FILE);
+
+            FileUtils.copyFile(file, new File("C:\\temp\\cap2.png"));
+        } catch (IOException e) {
+            // TODO 自動生成された catch ブロック
+            e.printStackTrace();
+        }
+        //this.createScreenCapture();
         //CalculatorSession.findElementByAccessibilityId("2").click();
     }
 
@@ -135,4 +179,27 @@ public class AppTest {
         return result.getText().replace("表示は", "").replace("です", "").trim();
     }
 
+    protected void initScreenCapture() {
+        try {
+            robot = new Robot();
+            bounds = new Rectangle(0, 0, 1920, 1000);
+        }catch(AWTException ex){
+            ex.printStackTrace();
+        }
+
+    }
+
+    protected void createScreenCapture()
+    {
+        BufferedImage image = robot.createScreenCapture(bounds);
+
+        // 以下、出力処理
+        String dirName = "C:\\Users\\swdev\\OneDrive\\デスクトップ\\";
+        String fileName = "test_" + format.format(new Date()) + ".jpg";
+        try {
+            ImageIO.write(image, "jpg", new File(dirName, fileName));
+        }catch(IOException ex) {
+            ex.printStackTrace();
+        }
+    }
 }
